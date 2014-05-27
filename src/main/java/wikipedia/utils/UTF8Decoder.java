@@ -1,14 +1,19 @@
 package wikipedia.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class UTF8Decoder {
+	private static Logger LOG = LoggerFactory.getLogger(UTF8Decoder.class);
+	
     public static String unescape(String s) {
-        if(s.endsWith("%"))
-            s = s.substring(0, s.length() - 1);
         StringBuffer sbuf = new StringBuffer();
         int l = s.length();
         int ch = -1;
         int b, sumb = 0;
         for (int i = 0, more = -1; i < l; i++) {
+        	try{
       /* Get next byte b from URL segment s */
             switch (ch = s.charAt(i)) {
                 case '%':
@@ -50,6 +55,10 @@ public class UTF8Decoder {
                 sumb = b & 0x01;
                 more = 5;                // Expect 5 more bytes
             }
+        	}catch(StringIndexOutOfBoundsException e){
+        		//bad formed word
+        		LOG.error("bad formed word : " + s);
+        	}
       /* We don't test if the UTF-8 encoding is well-formed */
         }
         return sbuf.toString();
