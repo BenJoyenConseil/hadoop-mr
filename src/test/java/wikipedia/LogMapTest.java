@@ -62,11 +62,9 @@ public class LogMapTest{
 		list.add("en");
 		list.add("fr");
 		logMapper.langagesSelection = list;
-		CustomKey key = new CustomKey();
-		key.setLang("fr");
 		
 		// Then
-		boolean result = logMapper.isRecordLangSelected(key);
+		boolean result = logMapper.isRecordLangSelected("fr");
 		
 		// When
 		assertThat(result, is(equalTo(true)));
@@ -79,11 +77,9 @@ public class LogMapTest{
 		list.add("en");
 		list.add("fr");
 		logMapper.langagesSelection = list;
-		CustomKey key = new CustomKey();
-		key.setLang("ca");
 		
 		// Then
-		boolean result = logMapper.isRecordLangSelected(key);
+		boolean result = logMapper.isRecordLangSelected("ca");
 		
 		// When
 		assertThat(result, is(equalTo(false)));

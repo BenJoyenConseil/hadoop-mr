@@ -52,18 +52,25 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 
         CustomKey outputKey = new CustomKey();
         String lang = values[0].toLowerCase();
-        if(!isRecordLangSelected(outputKey) || isRecordToBeIgnored(outputKey))
+        if(!isRecordLangSelected(lang)) {
             return;
+        }
 
+        //lang
+        outputKey.setLang(lang);
+        //date
         DateTime date = formatter.parseDateTime(fileNameSplit[1]);
         outputKey.setDay(date.getDayOfMonth());
         outputKey.setMonth(date.getMonthOfYear());
         outputKey.setYear(date.getYear());
-        outputKey.setLang(lang);
+        //name
         outputKey.setPageName(UTF8Decoder.unescape(values[1].toLowerCase()));
+        //count
         long count = Long.parseLong(values[2].toLowerCase());
         outputKey.setCount(count);
 
+        if(isRecordToBeIgnored(outputKey))
+            return;
 
 		addNewKey(outputKey);
 	}
@@ -117,8 +124,8 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 		}
 	}
 
-    boolean isRecordLangSelected(CustomKey outputKey) {
-        return langagesSelection.contains(outputKey.getLang());
+    boolean isRecordLangSelected(String recordLang) {
+        return langagesSelection.contains(recordLang);
     }
 
     boolean isRecordToBeIgnored(CustomKey outputKey) {
