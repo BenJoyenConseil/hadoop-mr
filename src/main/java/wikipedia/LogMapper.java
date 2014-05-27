@@ -10,12 +10,12 @@ import org.apache.hadoop.util.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import wikipedia.utils.UTF8Decoder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.text.Normalizer;
 import java.util.*;
 
 public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
@@ -56,7 +56,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 		outputKey.setMonth(date.getMonthOfYear());
 		outputKey.setYear(date.getYear());
 		outputKey.setLang(values[0].toLowerCase());
-		outputKey.setPageName(formatStringNormalizer(values[1]));
+		outputKey.setPageName(UTF8Decoder.unescape(values[1]));
 		long count = Long.parseLong(values[2].toLowerCase());
 		outputKey.setCount(count);
 
@@ -85,7 +85,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         String line;
         referenceList = new ArrayList<String>();
         while((line = reader.readLine()) != null){
-            referenceList.add(line);
+            referenceList.add(line.toLowerCase());
         }
         reader.close();
         stream.close();
@@ -123,16 +123,9 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         if(subjectsToIgnore.contains(outputKey.getPageName()))
             return true;
         for(String subject : subjectsToIgnore){
-            String subjectToIgnoreFormated = formatStringNormalizer(subject.toLowerCase());
-            String pageNameFormated = formatStringNormalizer(outputKey.getPageName());
-            if(pageNameFormated.contains(subjectToIgnoreFormated))
+            if(subject.contains(outputKey.getPageName()))
                 return true;
         }
         return false;
-    }
-
-    public static String formatStringNormalizer(String s) {
-        String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
-        return temp.replaceAll("[^\\p{ASCII}]", "").toLowerCase();
     }
 }
