@@ -1,7 +1,7 @@
 project.ext.mainclass = 'wikipedia.LogAnalysisJob'
 project.ext.archiveName = 'wikipedia.jar'
 
-apply from: '/home/train/labs/build.gradle'
+apply from: 'build-base.gradle'
 
 configurations{
 	releaseJars
