@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.text.Normalizer;
 import java.util.*;
 
 public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
@@ -64,9 +65,9 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         outputKey.setMonth(date.getMonthOfYear());
         outputKey.setYear(date.getYear());
         //name
-        outputKey.setPageName(UTF8Decoder.unescape(values[1].toLowerCase()));
+        outputKey.setPageName(formatStringNormalizer(UTF8Decoder.unescape(values[1])));
         //count
-        long count = Long.parseLong(values[2].toLowerCase());
+        long count = Long.parseLong(values[2]);
         outputKey.setCount(count);
 
         if(isRecordToBeIgnored(outputKey))
@@ -136,5 +137,10 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
                 return true;
         }
         return false;
+    }
+
+    public static String formatStringNormalizer(String s) {
+        String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+        return temp.replaceAll("[^\\p{ASCII}]", "").toLowerCase();
     }
 }

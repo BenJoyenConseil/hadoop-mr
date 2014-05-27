@@ -147,4 +147,17 @@ public class LogMapTest{
 
         // Then
     }
+
+    @Test
+    public void formatStringNormalizer(){
+        // Given
+        String in = "jean françois copé";
+        String expected = "jean francois cope";
+
+        // When
+        String result = logMapper.formatStringNormalizer(in);
+
+        // Then
+        assertThat(result, is(equalTo(expected)));
+    }
 }
