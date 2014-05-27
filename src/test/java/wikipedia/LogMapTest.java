@@ -1,10 +1,5 @@
 package wikipedia;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper.Context;
@@ -12,12 +7,15 @@ import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import static org.hamcrest.Matchers.is;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class LogMapTest{
 	
@@ -31,20 +29,23 @@ public class LogMapTest{
 	public void setup(){
 		mapDriver = MapDriver.newMapDriver(new LogMapper());
 		reduceDriver = ReduceDriver.newReduceDriver(new LogReducer());
+        mapDriver.addCacheFile("languages_selection.txt");
+        mapDriver.addCacheFile("page_names_to_skip.txt");
 	}
 
 	@Test
-	@Ignore
 	public void map_ShouldRetrieveTopTenViewed_WikipediaPage() throws IOException{
 		// Given
 		String keyInStr = "pagecounts-20140501-000000";
-		String valueInStr = "fr Tir_aux_Jeux_olympiques 1 14812";
+		String valueInStr = "fr Tir_aux_Jeux_olympiques 14812 24343232";
 		Text keyIn = new Text(keyInStr);
 		Text valueIn = new Text(valueInStr);
 		CustomKey keyOut = new CustomKey();
 		keyOut.setLang("fr");
 		keyOut.setMonth(5);
 		keyOut.setYear(2014);
+        keyOut.setDay(1);
+        keyOut.setCount(14812);
 		keyOut.setPageName("Tir_aux_Jeux_olympiques");
 		LongWritable valueOut = new LongWritable();
 		valueOut.set(14812L);
@@ -114,14 +115,14 @@ public class LogMapTest{
 	}
 	
 	@Test
-	@Ignore
 	public void reduce_ShouldRetrieveTopTenViewed_WikipediaPage() throws IOException{
 		// Given
 		CustomKey keyIn = new CustomKey();
 		keyIn.setLang("fr");
 		keyIn.setMonth(5);
 		keyIn.setYear(2014);
-		keyIn.setPageName("Tur_aux_Jeux_olympiques");
+        keyIn.setDay(1);
+		keyIn.setPageName("Tir_aux_Jeux_olympiques");
 		LongWritable valueIn = new LongWritable(513L);
 		List<LongWritable> valuesIn = new ArrayList<LongWritable>();
 		valuesIn.add(valueIn);
@@ -129,6 +130,8 @@ public class LogMapTest{
 		keyOut.setLang("fr");
 		keyOut.setMonth(5);
 		keyOut.setYear(2014);
+        keyOut.setDay(1);
+        keyOut.setCount(513L);
 		keyOut.setPageName("Tir_aux_Jeux_olympiques");
 		LongWritable valueOut = new LongWritable(513L);
 		reduceDriver.withInput(keyIn, valuesIn);
