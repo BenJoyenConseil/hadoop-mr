@@ -108,6 +108,22 @@ public class LogMapTest{
 		assertThat(result, is(equalTo(true)));
 	}
 
+    @Test
+    public void isRecordToBeIgnored_shouldReturnFalse_WhenPageNameMatchesTheConf() {
+        // Given
+        List list = new ArrayList<String>();
+        list.add("Special");
+        list.add("undefined");
+        logMapper.subjectsToIgnore = list;
+        CustomKey key = new CustomKey();
+        key.setPageName("bluckblcuk");
+
+        // Then
+        boolean result = logMapper.isRecordToBeIgnored(key);
+
+        // When
+        assertThat(result, is(equalTo(false)));
+    }
 
     @Test
     public void reduce_ShouldRetrieveTopTenViewed_WikipediaPage() throws IOException {
@@ -137,7 +153,4 @@ public class LogMapTest{
 
         // Then
     }
-
-
-
 }

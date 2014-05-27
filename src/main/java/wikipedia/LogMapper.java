@@ -56,7 +56,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 		outputKey.setMonth(date.getMonthOfYear());
 		outputKey.setYear(date.getYear());
 		outputKey.setLang(values[0].toLowerCase());
-		outputKey.setPageName(UTF8Decoder.unescape(values[1]));
+		outputKey.setPageName(UTF8Decoder.unescape(values[1].toLowerCase()));
 		long count = Long.parseLong(values[2].toLowerCase());
 		outputKey.setCount(count);
 
@@ -120,10 +120,12 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
     }
 
     boolean isRecordToBeIgnored(CustomKey outputKey) {
-        if(subjectsToIgnore.contains(outputKey.getPageName()))
+        String pageNameToLowerCase = outputKey.getPageName().toLowerCase();
+        if(subjectsToIgnore.contains(pageNameToLowerCase))
             return true;
         for(String subject : subjectsToIgnore){
-            if(subject.contains(outputKey.getPageName()))
+            String subjectToLowerCase = subject.toLowerCase();
+            if(subjectToLowerCase.contains(pageNameToLowerCase))
                 return true;
         }
         return false;
