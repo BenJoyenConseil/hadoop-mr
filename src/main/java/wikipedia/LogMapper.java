@@ -133,7 +133,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         if(subjectsToIgnore.contains(outputKey.getPageName()))
             return true;
         for(String subject : subjectsToIgnore){
-            if(subject.contains(outputKey.getPageName()))
+            if(outputKey.getPageName().contains(subject.toLowerCase()))
                 return true;
         }
         return false;
