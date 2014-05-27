@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class UTF8DecoderTest {
+
     @Test
     public void unescape_ShouldReplaceSpecialCharacters() throws Exception {
         // Given

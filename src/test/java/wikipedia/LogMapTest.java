@@ -88,15 +88,13 @@ public class LogMapTest{
 		// When
 		assertThat(result, is(equalTo(false)));
 	}
-	
 
-	
 	@Test
 	public void isRecordToBeIgnored_shouldReturnTrue_WhenPageNameDoesNotMatchTheConf(){
 		// Given
 		List list = new ArrayList<String>();
 		list.add("Special");
-		list.add("undefined");
+		list.add("Undefined");
 		logMapper.subjectsToIgnore = list;
 		CustomKey key = new CustomKey();
 		key.setPageName("Undefined");

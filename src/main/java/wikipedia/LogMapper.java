@@ -46,22 +46,24 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 
 		String[] fileNameSplit = StringUtils.split(key.toString(), '-');
 		String[] values = StringUtils.split(value.toString(), ' ');
-		if(fileNameSplit.length < 2 || values.length < 4)
-			return;
+        if(fileNameSplit.length < 2 || values.length < 4) {
+            return;
+        }
 
-		CustomKey outputKey = new CustomKey();
+        CustomKey outputKey = new CustomKey();
+        String lang = values[0].toLowerCase();
+        if(!isRecordLangSelected(outputKey) || isRecordToBeIgnored(outputKey))
+            return;
 
-		DateTime date = formatter.parseDateTime(fileNameSplit[1]);
-		outputKey.setDay(date.getDayOfMonth());
-		outputKey.setMonth(date.getMonthOfYear());
-		outputKey.setYear(date.getYear());
-		outputKey.setLang(values[0].toLowerCase());
-		outputKey.setPageName(UTF8Decoder.unescape(values[1].toLowerCase()));
-		long count = Long.parseLong(values[2].toLowerCase());
-		outputKey.setCount(count);
+        DateTime date = formatter.parseDateTime(fileNameSplit[1]);
+        outputKey.setDay(date.getDayOfMonth());
+        outputKey.setMonth(date.getMonthOfYear());
+        outputKey.setYear(date.getYear());
+        outputKey.setLang(lang);
+        outputKey.setPageName(UTF8Decoder.unescape(values[1].toLowerCase()));
+        long count = Long.parseLong(values[2].toLowerCase());
+        outputKey.setCount(count);
 
-		if(!isRecordLangSelected(outputKey) || isRecordToBeIgnored(outputKey))
-			return;
 
 		addNewKey(outputKey);
 	}
@@ -120,12 +122,10 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
     }
 
     boolean isRecordToBeIgnored(CustomKey outputKey) {
-        String pageNameToLowerCase = outputKey.getPageName().toLowerCase();
-        if(subjectsToIgnore.contains(pageNameToLowerCase))
+        if(subjectsToIgnore.contains(outputKey.getPageName()))
             return true;
         for(String subject : subjectsToIgnore){
-            String subjectToLowerCase = subject.toLowerCase();
-            if(subjectToLowerCase.contains(pageNameToLowerCase))
+            if(subject.contains(outputKey.getPageName()))
                 return true;
         }
         return false;
