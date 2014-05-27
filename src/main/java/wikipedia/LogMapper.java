@@ -1,15 +1,5 @@
 package wikipedia;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -20,6 +10,13 @@ import org.apache.hadoop.util.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.text.Normalizer;
+import java.util.*;
 
 public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 
@@ -44,68 +41,64 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 		}
 	}
 
-	private List<String> fillTheList(Context context, Path file) throws IOException {
-		List<String> referenceList = new ArrayList<String>();
-		FSDataInputStream stream;
-		BufferedReader reader;
-		stream = FileSystem.get(context.getConfiguration()).open(file);
-		reader = new BufferedReader(new InputStreamReader(stream));
-		String line;
-		referenceList = new ArrayList<String>();
-		while((line = reader.readLine()) != null){
-			referenceList.add(line);
-		}
-		reader.close();
-		stream.close();
-		return referenceList;
-	}
-	
 	@Override
 	protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
-		
+
 		String[] fileNameSplit = StringUtils.split(key.toString(), '-');
 		String[] values = StringUtils.split(value.toString(), ' ');
 		if(fileNameSplit.length < 2 || values.length < 4)
 			return;
-		
+
 		CustomKey outputKey = new CustomKey();
-		
+
 		DateTime date = formatter.parseDateTime(fileNameSplit[1]);
 		outputKey.setDay(date.getDayOfMonth());
 		outputKey.setMonth(date.getMonthOfYear());
 		outputKey.setYear(date.getYear());
 		outputKey.setLang(values[0].toLowerCase());
-		outputKey.setPageName(values[1]);
+		outputKey.setPageName(formatStringNormalizer(values[1]));
 		long count = Long.parseLong(values[2].toLowerCase());
 		outputKey.setCount(count);
-		
+
 		if(!isRecordLangSelected(outputKey) || isRecordToBeIgnored(outputKey))
 			return;
 
 		addNewKey(outputKey);
 	}
 
-	boolean isRecordLangSelected(CustomKey outputKey) {
-		return langagesSelection.contains(outputKey.getLang());
-	}
+    @Override
+    protected void cleanup(Context context) throws IOException, InterruptedException {
+        for(String lang : topTenByLang.keySet()){
+            List<CustomKey> topTen = topTenByLang.get(lang);
+            for(CustomKey k : topTen){
+                context.write(k, new LongWritable(k.getCount()));
+            }
+        }
+    }
 
-	boolean isRecordToBeIgnored(CustomKey outputKey) {
-		if(subjectsToIgnore.contains(outputKey.getPageName()))
-			return true;
-		for(String subject : subjectsToIgnore){
-			if(outputKey.getPageName().toLowerCase().contains(subject.toLowerCase()))
-				return true;
-		}
-		return false;
-	}
+    private List<String> fillTheList(Context context, Path file) throws IOException {
+        List<String> referenceList = new ArrayList<String>();
+        FSDataInputStream stream;
+        BufferedReader reader;
+        stream = FileSystem.get(context.getConfiguration()).open(file);
+        reader = new BufferedReader(new InputStreamReader(stream));
+        String line;
+        referenceList = new ArrayList<String>();
+        while((line = reader.readLine()) != null){
+            referenceList.add(line);
+        }
+        reader.close();
+        stream.close();
+        return referenceList;
+    }
 
 	void addNewKey(CustomKey newKey) {
 		List<CustomKey> topTen;
 		if(!topTenByLang.containsKey(newKey.getLang()))
 			topTenByLang.put(newKey.getLang(), new ArrayList<CustomKey>(10));
-		
+
 		topTen = topTenByLang.get(newKey.getLang());
-		
+
 		if(topTen.contains(newKey)){
 			for(CustomKey k : topTen)
 				if(k == newKey)
@@ -121,14 +114,25 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 			}
 		}
 	}
-	
-	@Override
-	protected void cleanup(Context context) throws IOException, InterruptedException {
-		for(String lang : topTenByLang.keySet()){
-			List<CustomKey> topTen = topTenByLang.get(lang);
-			for(CustomKey k : topTen){
-				context.write(k, new LongWritable(k.getCount()));
-			}
-		}
-	}
+
+    boolean isRecordLangSelected(CustomKey outputKey) {
+        return langagesSelection.contains(outputKey.getLang());
+    }
+
+    boolean isRecordToBeIgnored(CustomKey outputKey) {
+        if(subjectsToIgnore.contains(outputKey.getPageName()))
+            return true;
+        for(String subject : subjectsToIgnore){
+            String subjectToIgnoreFormated = formatStringNormalizer(subject.toLowerCase());
+            String pageNameFormated = formatStringNormalizer(outputKey.getPageName());
+            if(pageNameFormated.contains(subjectToIgnoreFormated))
+                return true;
+        }
+        return false;
+    }
+
+    public static String formatStringNormalizer(String s) {
+        String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+        return temp.replaceAll("[^\\p{ASCII}]", "").toLowerCase();
+    }
 }

@@ -1,18 +1,10 @@
 package wikipedia;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.Reducer;
+
+import java.io.IOException;
+import java.util.*;
 
 public class LogReducer extends Reducer<CustomKey, LongWritable, CustomKey, LongWritable> {
 
@@ -40,24 +32,6 @@ public class LogReducer extends Reducer<CustomKey, LongWritable, CustomKey, Long
 		
 	}
 
-	private void addKeyValueToTopMap(CustomKey key) {
-		if(!topTenByLang.containsKey(key.getLang()))
-			topTenByLang.put(key.getLang(), new ArrayList<CustomKey>(topMapSize));
-		
-		List<CustomKey> top = topTenByLang.get(key.getLang());
-		
-		if(top.size() < topMapSize){
-			top.add(key);
-		}
-		else{
-			CustomKey min = Collections.min(top, new CountComparator());
-			if(min.getCount() < key.getCount()){
-				top.remove(min);
-				top.add(key);
-			}
-		}
-	}
-	
 	@Override
 	protected void cleanup(Context context)	throws IOException, InterruptedException {
 
@@ -76,5 +50,23 @@ public class LogReducer extends Reducer<CustomKey, LongWritable, CustomKey, Long
 			}
 		}
 	}
-	
+
+    private void addKeyValueToTopMap(CustomKey key) {
+        if(!topTenByLang.containsKey(key.getLang()))
+            topTenByLang.put(key.getLang(), new ArrayList<CustomKey>(topMapSize));
+
+        List<CustomKey> top = topTenByLang.get(key.getLang());
+
+        if(top.size() < topMapSize){
+            top.add(key);
+        }
+        else{
+            CustomKey min = Collections.min(top, new CountComparator());
+            if(min.getCount() < key.getCount()){
+                top.remove(min);
+                top.add(key);
+            }
+        }
+    }
+
 }
