@@ -2,6 +2,8 @@ package wikipedia.utils;
 
 public class UTF8Decoder {
     public static String unescape(String s) {
+        if(s.endsWith("%"))
+            s = s.substring(0, s.length() - 1);
         StringBuffer sbuf = new StringBuffer();
         int l = s.length();
         int ch = -1;

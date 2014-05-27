@@ -18,6 +18,21 @@ public class UTF8DecoderTest {
         String result = UTF8Decoder.unescape(pageNameUnFormated);
 
         // Then
+        System.out.println(result);
+        assertThat(result, is(equalTo(expected)));
+    }
+
+
+    @Test
+    public void unescape_ShouldExpulsePourcentAtTheEndOfString() throws Exception {
+        // Given
+        String pageNameUnFormated = "jean-fran%c3%a7ois cop%c3%a9%";
+        String expected = "jean-françois copé";
+
+        // When
+        String result = UTF8Decoder.unescape(pageNameUnFormated);
+
+        // Then
         assertThat(result, is(equalTo(expected)));
     }
 }
