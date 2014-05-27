@@ -46,7 +46,7 @@ public class LogMapTest{
 		keyOut.setYear(2014);
         keyOut.setDay(1);
         keyOut.setCount(14812);
-		keyOut.setPageName("Tir_aux_Jeux_olympiques");
+		keyOut.setPageName("tir_aux_jeux_olympiques");
 		LongWritable valueOut = new LongWritable();
 		valueOut.set(14812L);
 		mapDriver.withInput(keyIn, valueIn);
