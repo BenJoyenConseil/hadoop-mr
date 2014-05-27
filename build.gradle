@@ -1,0 +1,22 @@
+project.ext.mainclass = 'wikipedia.LogAnalysisJob'
+project.ext.archiveName = 'wikipedia.jar'
+
+apply from: '/home/train/labs/build.gradle'
+
+configurations{
+	releaseJars
+}
+
+jar{
+	from {
+		configurations.releaseJars.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+}
+
+dependencies {
+	compile 'joda-time:joda-time:2.3'
+	runtime 'joda-time:joda-time:2.3'
+	releaseJars 'joda-time:joda-time:2.3'
+}
