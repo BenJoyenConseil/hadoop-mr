@@ -1,11 +1,6 @@
 package wikipedia;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
+import com.google.common.base.Charsets;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -14,9 +9,8 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.LineRecordReader;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
-import com.google.common.base.Charsets;
+import java.io.IOException;
 
 public class FileNameTextInputFormat extends FileInputFormat<Text, Text>{
 
@@ -26,6 +20,7 @@ public class FileNameTextInputFormat extends FileInputFormat<Text, Text>{
 			InterruptedException {
 		
 		return new FileNameTextRecordReader();
+
 	}
 	
 	public static class FileNameTextRecordReader extends RecordReader<Text, Text>{

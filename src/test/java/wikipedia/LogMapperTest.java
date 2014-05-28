@@ -26,8 +26,8 @@ public class LogMapperTest {
         logMapper = new LogMapper();
         mapDriver = MapDriver.newMapDriver(logMapper);
 		reduceDriver = ReduceDriver.newReduceDriver(new LogReducer());
-        mapDriver.addCacheFile("languages_selection.txt");
-        mapDriver.addCacheFile("page_names_to_skip.txt");
+        mapDriver.addCacheFile("conf/languages_selection.txt");
+        mapDriver.addCacheFile("conf/page_names_to_skip.txt");
 	}
 
 	@Test
