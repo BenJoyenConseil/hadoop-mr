@@ -10,13 +10,13 @@ import org.apache.hadoop.util.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import wikipedia.utils.ASCIINormalizer;
 import wikipedia.utils.UTF8Decoder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.text.Normalizer;
 import java.util.*;
 
 public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
@@ -36,41 +36,24 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 		for(URI uri : context.getCacheFiles()){
 			Path file = new Path(uri);
 			if(file.getName().startsWith("languages_selection"))
-				langagesSelection = fillTheList(context, file);
+				langagesSelection = getWordList(context, file);
 			else if(file.getName().startsWith("page_names_to_skip"))
-				subjectsToIgnore = fillTheList(context, file);
+				subjectsToIgnore = getWordList(context, file);
 		}
 	}
 
 	@Override
 	protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
 
-		String[] fileNameSplit = StringUtils.split(key.toString(), '-');
-		String[] values = StringUtils.split(value.toString(), ' ');
-        if(fileNameSplit.length < 2 || values.length < 4) {
+		String[] fileNameSplits = StringUtils.split(key.toString(), '-');
+		String[] recordSplits = StringUtils.split(value.toString(), ' ');
+        if(fileNameSplits.length < 2 || recordSplits.length < 4) {
             return;
         }
 
-        CustomKey outputKey = new CustomKey();
-        String lang = values[0].toLowerCase();
-        if(!isRecordLangSelected(lang)) {
-            return;
-        }
+        CustomKey outputKey = buildCustomKeyFromRecord(fileNameSplits[1], recordSplits);
 
-        //lang
-        outputKey.setLang(lang);
-        //date
-        DateTime date = formatter.parseDateTime(fileNameSplit[1]);
-        outputKey.setDay(date.getDayOfMonth());
-        outputKey.setMonth(date.getMonthOfYear());
-        outputKey.setYear(date.getYear());
-        //name
-        outputKey.setPageName(formatStringNormalizer(UTF8Decoder.unescape(values[1])));
-        //count
-        long count = Long.parseLong(values[2]);
-        outputKey.setCount(count);
-
-        if(isRecordToBeIgnored(outputKey))
+        if(isRecordToBeIgnored(outputKey) || !isRecordLangSelected(outputKey.getLang()))
             return;
 
 		addNewKey(outputKey);
@@ -86,44 +69,40 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         }
     }
 
-    private List<String> fillTheList(Context context, Path file) throws IOException {
-        List<String> referenceList = new ArrayList<String>();
-        FSDataInputStream stream;
-        BufferedReader reader;
-        stream = FileSystem.get(context.getConfiguration()).open(file);
-        reader = new BufferedReader(new InputStreamReader(stream));
-        String line;
-        referenceList = new ArrayList<String>();
-        while((line = reader.readLine()) != null){
-            referenceList.add(line.toLowerCase());
-        }
-        reader.close();
-        stream.close();
-        return referenceList;
-    }
-
-	void addNewKey(CustomKey newKey) {
+	private void addNewKey(CustomKey newKey) {
 		List<CustomKey> topTen;
-		if(!topTenByLang.containsKey(newKey.getLang()))
-			topTenByLang.put(newKey.getLang(), new ArrayList<CustomKey>(10));
-
-		topTen = topTenByLang.get(newKey.getLang());
+        topTen = getCustomKeyTopTen(newKey);
 
 		if(topTen.contains(newKey)){
-			for(CustomKey k : topTen)
-				if(k == newKey)
-					k.setCount(k.getCount() + newKey.getCount());
-		}
+            updateCount(newKey, topTen);
+        }
 		else if(topTen.size() < 10)
 			topTen.add(newKey);
 		else{
 			CustomKey min = Collections.min(topTen, new CountComparator());
 			if(min.getCount() < newKey.getCount()){
-				topTen.remove(min);
-				topTen.add(newKey);
+                replaceKey(topTen, newKey, min);
 			}
 		}
 	}
+
+    private CustomKey buildCustomKeyFromRecord(String fileNameSplits, String[] recordSplits) {
+        CustomKey outputKey = new CustomKey();
+        //lang
+        String lang = recordSplits[0].toLowerCase();
+        outputKey.setLang(lang);
+        //date
+        DateTime date = formatter.parseDateTime(fileNameSplits);
+        outputKey.setDay(date.getDayOfMonth());
+        outputKey.setMonth(date.getMonthOfYear());
+        outputKey.setYear(date.getYear());
+        //name
+        outputKey.setPageName(ASCIINormalizer.formatStringNormalizer(UTF8Decoder.unescape(recordSplits[1])));
+        //count
+        long count = Long.parseLong(recordSplits[2]);
+        outputKey.setCount(count);
+        return outputKey;
+    }
 
     boolean isRecordLangSelected(String recordLang) {
         return langagesSelection.contains(recordLang);
@@ -139,8 +118,39 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         return false;
     }
 
-    public static String formatStringNormalizer(String s) {
-        String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
-        return temp.replaceAll("[^\\p{ASCII}]", "").toLowerCase();
+    private List<String> getWordList(Context context, Path file) throws IOException {
+        List<String> referenceList = new ArrayList<String>();
+        FSDataInputStream stream;
+        BufferedReader reader;
+        stream = FileSystem.get(context.getConfiguration()).open(file);
+        reader = new BufferedReader(new InputStreamReader(stream));
+        String line;
+        referenceList = new ArrayList<String>();
+        while((line = reader.readLine()) != null){
+            referenceList.add(line.toLowerCase());
+        }
+        reader.close();
+        stream.close();
+        return referenceList;
+    }
+
+    private void replaceKey(List<CustomKey> topTen, CustomKey newKey, CustomKey oldKey) {
+        topTen.remove(oldKey);
+        topTen.add(newKey);
+    }
+
+    private void updateCount(CustomKey newKey, List<CustomKey> topTen) {
+        for(CustomKey k : topTen)
+            if(k == newKey)
+                k.setCount(k.getCount() + newKey.getCount());
+    }
+
+    private List<CustomKey> getCustomKeyTopTen(CustomKey newKey) {
+        List<CustomKey> topTen;
+        if(!topTenByLang.containsKey(newKey.getLang()))
+            topTenByLang.put(newKey.getLang(), new ArrayList<CustomKey>(10));
+
+        topTen = topTenByLang.get(newKey.getLang());
+        return topTen;
     }
 }
