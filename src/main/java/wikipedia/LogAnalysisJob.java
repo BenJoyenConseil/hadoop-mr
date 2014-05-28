@@ -67,6 +67,12 @@ public class LogAnalysisJob extends Configured implements Tool {
             FileNameTextInputFormat.setInputPathFilter(job, WeekDatePathFilter.class);
         }
 
+        if (args.length >= 4) {
+            fs.copyFromLocalFile(false, true, new Path("conf/search_topic_dictionary.txt"), new Path("search_topic_dictionary"));
+            job.addCacheFile(new URI("search_topic_dictionary"));
+            job.setMapperClass(SearchTopicLogMapper.class);
+        }
+
 		job.setNumReduceTasks(5);
 		
 		return job.waitForCompletion(true) ? 1 : 0;

@@ -118,7 +118,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         return false;
     }
 
-    private List<String> getWordList(Context context, Path file) throws IOException {
+    protected List<String> getWordList(Context context, Path file) throws IOException {
         List<String> referenceList = new ArrayList<String>();
         FSDataInputStream stream;
         BufferedReader reader;
