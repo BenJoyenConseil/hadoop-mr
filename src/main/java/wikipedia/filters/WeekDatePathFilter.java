@@ -8,9 +8,15 @@ public class WeekDatePathFilter extends DatePathFilter{
 
     @Override
     public boolean accept(Path path) {
-        DateTime fileDate = getFileDateTime(path);
-        if(fileDate.getYear() != getDateTime().getYear())
-            return false;
-        return fileDate.getWeekOfWeekyear() == getDateTime().getWeekOfWeekyear();
+    	try{
+	        DateTime fileDate = parseFileDateTime(path);
+	        if(fileDate.getYear() != getDateTime().getYear())
+	            return false;
+	        return fileDate.getWeekOfWeekyear() == getDateTime().getWeekOfWeekyear();
+    	}
+    	catch(UnsupportedOperationException e){
+        	LOG.error("Could not parse following path :" + path.getName());
+        	return true;
+    	}
     }
 }

@@ -6,10 +6,13 @@ import org.apache.hadoop.util.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class DatePathFilter implements PathFilter {
 
+	protected static Logger LOG = LoggerFactory.getLogger(DatePathFilter.class);
     private static DateTime dateTime;
     private static String datePattern = "yyyyMMdd";
     protected static DateTimeFormatter formatter = DateTimeFormat.forPattern(datePattern);
@@ -17,13 +20,25 @@ public class DatePathFilter implements PathFilter {
 
     @Override
     public boolean accept(Path path) {
-        DateTime fileDate = getFileDateTime(path);
-        return fileDate.equals(dateTime);
+    	try{
+    		DateTime fileDate = parseFileDateTime(path);
+            return fileDate.equals(dateTime);
+    	}
+    	catch(UnsupportedOperationException e){
+        	LOG.error("Could not parse following path :" + path.getName());
+        	return true;
+    	}
     }
 
-    protected DateTime getFileDateTime(Path path) {
+    protected DateTime parseFileDateTime(Path path) throws UnsupportedOperationException {
         String[] fileNameSplits = StringUtils.split(path.getName(), '-');
-        return formatter.parseDateTime(fileNameSplits[1]);
+        String dateString;
+
+        if(fileNameSplits.length <= 1)
+        	throw new UnsupportedOperationException("not wikipedia log file");
+        
+        dateString = fileNameSplits[1];
+        return formatter.parseDateTime(dateString);
     }
 
     public static DateTime getDateTime() {
