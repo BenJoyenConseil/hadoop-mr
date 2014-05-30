@@ -6,7 +6,6 @@ public class OptionCollection {
 
     public OptionCollection(String[] args){
         this.args = args;
-        new OptionCollection(args).contains(OptionType.Date);
     }
 
     public boolean contains(OptionType optionType){

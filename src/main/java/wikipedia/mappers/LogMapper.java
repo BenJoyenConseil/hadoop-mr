@@ -33,7 +33,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 
 		topTenByLang = new HashMap<String, List<CustomKey>>();
 
-        if (!langagesSelection.isEmpty())
+        if (langagesSelection != null)
             return;
 		for(URI uri : context.getCacheFiles()){
 			Path file = new Path(uri);
