@@ -1,4 +1,4 @@
-package wikipedia.filters;
+package wikipedia.filters.date;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;

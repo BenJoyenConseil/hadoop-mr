@@ -2,6 +2,7 @@ package wikipedia.filters;
 
 import org.apache.hadoop.fs.Path;
 import org.junit.Test;
+import wikipedia.filters.date.DatePathFilter;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;

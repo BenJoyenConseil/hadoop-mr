@@ -1,4 +1,4 @@
-package wikipedia;
+package wikipedia.mappers;
 
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -10,6 +10,8 @@ import org.apache.hadoop.util.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import wikipedia.CountComparator;
+import wikipedia.CustomKey;
 import wikipedia.utils.ASCIINormalizer;
 import wikipedia.utils.UTF8Decoder;
 
@@ -21,24 +23,22 @@ import java.util.*;
 
 public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 
-	private DateTimeFormatter formatter;
-	private Map<String, List<CustomKey>> topTenByLang;
-	List<String> langagesSelection;
-	List<String> subjectsToIgnore;
-	
-	@Override
+	private static DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMdd");
+    static List<String> langagesSelection;
+    private Map<String, List<CustomKey>> topTenByLang;
+    private static boolean topTenMapper;
+
+    @Override
 	protected void setup(Context context) throws IOException, InterruptedException {
-		formatter = DateTimeFormat.forPattern("yyyyMMdd");
+
 		topTenByLang = new HashMap<String, List<CustomKey>>();
-		
-		FSDataInputStream stream;
-		BufferedReader reader;
+
+        if (!langagesSelection.isEmpty())
+            return;
 		for(URI uri : context.getCacheFiles()){
 			Path file = new Path(uri);
 			if(file.getName().startsWith("languages_selection"))
 				langagesSelection = getWordList(context, file);
-			else if(file.getName().startsWith("page_names_to_skip"))
-				subjectsToIgnore = getWordList(context, file);
 		}
 	}
 
@@ -56,11 +56,17 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         if(isRecordToBeIgnored(outputKey) || !isRecordLangSelected(outputKey.getLang()))
             return;
 
-		addNewKey(outputKey);
+        if(isTopTenMapper())
+		    addNewKeyInTopTen(outputKey);
+        else
+            context.write(outputKey, new LongWritable(outputKey.getCount()));
 	}
 
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
+        if(!isTopTenMapper())
+            return;
+
         for(String lang : topTenByLang.keySet()){
             List<CustomKey> topTen = topTenByLang.get(lang);
             for(CustomKey k : topTen){
@@ -69,7 +75,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         }
     }
 
-	private void addNewKey(CustomKey newKey) {
+	protected void addNewKeyInTopTen(CustomKey newKey) {
 		List<CustomKey> topTen;
         topTen = getCustomKeyTopTen(newKey);
 
@@ -86,7 +92,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 		}
 	}
 
-    private CustomKey buildCustomKeyFromRecord(String fileNameSplits, String[] recordSplits) {
+    protected CustomKey buildCustomKeyFromRecord(String fileNameSplits, String[] recordSplits) {
         CustomKey outputKey = new CustomKey();
         //lang
         String lang = recordSplits[0].toLowerCase();
@@ -109,12 +115,6 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
     }
 
     boolean isRecordToBeIgnored(CustomKey outputKey) {
-        if(subjectsToIgnore.contains(outputKey.getPageName()))
-            return true;
-        for(String subject : subjectsToIgnore){
-            if(outputKey.getPageName().contains(subject.toLowerCase()))
-                return true;
-        }
         return false;
     }
 
@@ -152,5 +152,13 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 
         topTen = topTenByLang.get(newKey.getLang());
         return topTen;
+    }
+
+    public static boolean isTopTenMapper() {
+        return topTenMapper;
+    }
+
+    public static void setTopTenMapper(boolean topTenMapper) {
+        LogMapper.topTenMapper = topTenMapper;
     }
 }

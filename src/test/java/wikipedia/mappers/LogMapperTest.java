@@ -1,4 +1,4 @@
-package wikipedia;
+package wikipedia.mappers;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -6,6 +6,8 @@ import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
+import wikipedia.CustomKey;
+import wikipedia.LogReducer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,39 +87,6 @@ public class LogMapperTest {
 		assertThat(result, is(equalTo(false)));
 	}
 
-	@Test
-	public void isRecordToBeIgnored_shouldReturnTrue_WhenPageNameDoesNotMatchTheConf(){
-		// Given
-		List list = new ArrayList<String>();
-		list.add("Special");
-		list.add("Undefined");
-		logMapper.subjectsToIgnore = list;
-		CustomKey key = new CustomKey();
-		key.setPageName("Undefined");
-		
-		// Then
-		boolean result = logMapper.isRecordToBeIgnored(key);
-		
-		// When
-		assertThat(result, is(equalTo(true)));
-	}
-
-    @Test
-    public void isRecordToBeIgnored_shouldReturnFalse_WhenPageNameMatchesTheConf() {
-        // Given
-        List list = new ArrayList<String>();
-        list.add("Special");
-        list.add("undefined");
-        logMapper.subjectsToIgnore = list;
-        CustomKey key = new CustomKey();
-        key.setPageName("bluckblcuk");
-
-        // Then
-        boolean result = logMapper.isRecordToBeIgnored(key);
-
-        // When
-        assertThat(result, is(equalTo(false)));
-    }
 
     @Test
     public void reduce_ShouldRetrieveTopTenViewed_WikipediaPage() throws IOException {

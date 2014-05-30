@@ -3,7 +3,7 @@ package wikipedia.option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractOption<T> {
+public abstract class AbstractOption<T> implements IOption{
     protected static Logger LOG = LoggerFactory.getLogger(AbstractOption.class);
     String code;
     T value;
@@ -44,7 +44,7 @@ public abstract class AbstractOption<T> {
     protected abstract void setValueFromArg(String arg);
 
     protected void error(){
-        LOG.error("La valeur de l'option " + getCode() + " est manquante !");
+        LOG.warn("La valeur de l'option " + getCode() + " est manquante !");
     }
 
     public String getCode() {

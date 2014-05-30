@@ -5,7 +5,7 @@ import org.apache.hadoop.fs.Path;
 
 public class InputPathOption extends AbstractOption<Path>{
 
-    private static final String INPUT_PATH_OPTION_TAG = "-searchTopicFile";
+    private static final String INPUT_PATH_OPTION_TAG = "-in";
     private static final String DEFAULT_INPUTPATH = "wikipedia";
 
     public InputPathOption() {

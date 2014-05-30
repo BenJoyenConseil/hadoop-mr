@@ -9,14 +9,12 @@ import java.util.*;
 public class LogReducer extends Reducer<CustomKey, LongWritable, CustomKey, LongWritable> {
 
 	private LongWritable outputValue;
-	//private List<CustomKey> top;
 	private Map<String, List<CustomKey>> topTenByLang;
 	private final int topMapSize = 10;
 	
 	@Override
 	protected void setup(Context context) throws IOException, InterruptedException {
 		outputValue = new LongWritable(0);
-		//top = new ArrayList<CustomKey>(10);
 		topTenByLang = new HashMap<String, List<CustomKey>>();
 	}
 	

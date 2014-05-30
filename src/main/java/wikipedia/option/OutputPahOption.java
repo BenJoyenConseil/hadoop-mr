@@ -4,7 +4,7 @@ package wikipedia.option;
 import org.apache.hadoop.fs.Path;
 
 public class OutputPahOption extends AbstractOption<Path>{
-    private static final String OUTPUT_PATH_OPTION_TAG = "-searchTopicFile";
+    private static final String OUTPUT_PATH_OPTION_TAG = "-out";
     private static final String DEFAULT_OUTPUTPATH = "wikipedia-out";
 
     public OutputPahOption(String[] args) {
