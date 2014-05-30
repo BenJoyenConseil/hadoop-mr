@@ -16,9 +16,9 @@ Utilisez votre cluster Hadoop avec la commande suivante :
 
 Plusieurs options sont possibles : 
 
-    -in : <Optionel> le dossier d'entrée (sur HDFS), contenant les fichiers à analyser. Par défault "wikipedia".
-    -out : <Optionel> le dossier de sortie (sur HDFS), qui contientdra les parties de la phase reduce. Par default "wikipedia-out".
-    -date [yyyyMMdd] : <Optionel> précise la date à laquelle l'analyse commence (ex : 20140514)
-    -searchTopicFile : précise le fichier contenant la liste des topics à rechercher. Si l'option n'existe pas, la recherche prend par default tous les sujets de wikipedia.
-    -restrictionFile : précise le fichier contenant la liste des topics à ignorer (comme la page d'accueil de Wikipédia). Si l'option n'est pas soumise, la recherche ne sera pas restreinte.
+    -in : <Optionnel> le dossier d'entrée (sur HDFS), contenant les fichiers à analyser. Par défault "wikipedia".
+    -out : <Optionnel> le dossier de sortie (sur HDFS), qui contientdra les parties de la phase reduce. Par default "wikipedia-out".
+    -date : <Optionnel> précise la date à laquelle l'analyse commence (ex : 20140514) au format [yyyyMMdd].
+    -searchTopicFile : <Optionnel> précise le fichier contenant la liste des topics à rechercher. Si l'option n'existe pas, la recherche prend par default tous les sujets de wikipedia.
+    -restrictionFile : <Optionnel> précise le fichier contenant la liste des topics à ignorer (comme la page d'accueil de Wikipédia). Si l'option n'est pas soumise, la recherche ne sera pas restreinte.
                       
