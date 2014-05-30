@@ -48,4 +48,8 @@ public class DatePathFilter implements PathFilter {
     public static void setDateTime(String dateString) {
         DatePathFilter.dateTime = formatter.parseDateTime(dateString);
     }
+
+    public static void setDateTime(DateTime dateTime) {
+        DatePathFilter.dateTime = dateTime;
+    }
 }

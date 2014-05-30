@@ -10,6 +10,10 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikipedia.filters.WeekDatePathFilter;
+import wikipedia.option.DateOption;
+import wikipedia.option.InputPathOption;
+import wikipedia.option.OutputPahOption;
+import wikipedia.option.SearchTopicOption;
 
 import java.net.URI;
 
@@ -27,16 +31,10 @@ public class LogAnalysisJob extends Configured implements Tool {
 		
 		//paramétrage des fichiers d'entrée
 		FileNameTextInputFormat.setInputDirRecursive(job, true);
-        String inPathString = "wikipedia";
-        if(args.length >= 1)
-            inPathString = args[0];
-        FileNameTextInputFormat.setInputPaths(job, new Path(inPathString));
+        FileNameTextInputFormat.setInputPaths(job, new InputPathOption(args).getValue());
 		
 		//paramétrage de la sortie
-        String outPathString = "wikipedia-out";
-        if (args.length >= 2)
-            outPathString = args[1];
-        Path out = new Path(outPathString);
+        Path out = new OutputPahOption(args).getValue();
 		out.getFileSystem(getConf()).delete(out, true);
 		TextOutputFormat.setOutputPath(job, out);
 		
@@ -61,19 +59,22 @@ public class LogAnalysisJob extends Configured implements Tool {
 		fs.copyFromLocalFile(false, true, new Path("conf/page_names_to_skip.txt"), new Path("page_names_to_skip"));
 		job.addCacheFile(new URI("page_names_to_skip"));
 
-
-        if (args.length >= 3) {
-            WeekDatePathFilter.setDateTime(args[2]);
+        DateOption dateOption = new DateOption();
+        if (dateOption.contains(args)) {
+            dateOption.setValueFromArgs(args);
+            WeekDatePathFilter.setDateTime(dateOption.getValue());
             FileNameTextInputFormat.setInputPathFilter(job, WeekDatePathFilter.class);
         }
 
-        if (args.length >= 4) {
-            fs.copyFromLocalFile(false, true, new Path("conf/search_topic_dictionary.txt"), new Path("search_topic_dictionary"));
+        SearchTopicOption searchTopicOption = new SearchTopicOption();
+        if (searchTopicOption.contains(args)) {
+            searchTopicOption.setValueFromArgs(args);
+            fs.copyFromLocalFile(false, true, searchTopicOption.getValue(), new Path("search_topic_dictionary"));
             job.addCacheFile(new URI("search_topic_dictionary"));
             job.setMapperClass(SearchTopicLogMapper.class);
         }
 
-		job.setNumReduceTasks(5);
+		job.setNumReduceTasks(4);
 		
 		return job.waitForCompletion(true) ? 1 : 0;
 	}
