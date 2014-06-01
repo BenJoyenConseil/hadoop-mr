@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import wikipedia.CountComparator;
-import wikipedia.CustomKey;
+import wikipedia.domain.CustomKey;
 import wikipedia.utils.ASCIINormalizer;
 import wikipedia.utils.UTF8Decoder;
 

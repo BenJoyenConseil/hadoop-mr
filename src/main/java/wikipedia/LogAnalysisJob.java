@@ -9,11 +9,13 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import wikipedia.domain.CustomKey;
 import wikipedia.filters.date.DayDatePathFilter;
 import wikipedia.mappers.LogMapper;
 import wikipedia.mappers.RestrictLogMapper;
 import wikipedia.mappers.SearchTopicLogMapper;
-import wikipedia.option.*;
+import wikipedia.options.*;
+import wikipedia.reducers.LogReducer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,8 +51,12 @@ public class LogAnalysisJob extends Configured implements Tool {
         if (options.contains(OptionType.Date)) {
             setDateFilter(options, job);
         }
-        if(options.contains(OptionType.NoTopTen))
+        if(options.contains(OptionType.NoTopTen)){
             LogMapper.setTopTenMapper(false);
+        }
+        if(options.contains(OptionType.UseCombiner)){
+            job.setCombinerClass(LogReducer.class);
+        }
 
 		job.setNumReduceTasks(4);
 		return job.waitForCompletion(true) ? 1 : 0;

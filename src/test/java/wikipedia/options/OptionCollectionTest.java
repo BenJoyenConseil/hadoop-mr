@@ -1,4 +1,4 @@
-package wikipedia.option;
+package wikipedia.options;
 
 
 import org.junit.Test;
@@ -25,6 +25,7 @@ public class OptionCollectionTest {
                                     "-restrictionFile\n" +
                                     "-date\n" +
                                     "-noTopTen\n" +
+                                    "-useCombiner\n" +
                                     "-help\n")));
     }
 }

@@ -1,7 +1,7 @@
 Wikipedia
 Hauptseite
 Special:Search
-index.html
+index
 Accueil_principal
 undefined
 Especial

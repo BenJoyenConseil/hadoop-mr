@@ -2,7 +2,7 @@ package wikipedia.mappers;
 
 
 import org.apache.hadoop.fs.Path;
-import wikipedia.CustomKey;
+import wikipedia.domain.CustomKey;
 
 import java.io.IOException;
 import java.net.URI;

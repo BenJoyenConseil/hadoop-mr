@@ -1,4 +1,4 @@
-package wikipedia.option;
+package wikipedia.options;
 
 import org.apache.hadoop.fs.Path;
 

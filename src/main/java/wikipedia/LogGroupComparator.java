@@ -1,6 +1,7 @@
 package wikipedia;
 
 import org.apache.hadoop.io.WritableComparator;
+import wikipedia.domain.CustomKey;
 
 public class LogGroupComparator extends WritableComparator {
 	

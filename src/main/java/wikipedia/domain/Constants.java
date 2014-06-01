@@ -1,4 +1,4 @@
-package wikipedia;
+package wikipedia.domain;
 
 public class Constants {
 	public static final String LANG_FILTER_CONFIGURATION = "wikipedia.log.lang.filter";

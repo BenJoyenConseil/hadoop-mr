@@ -1,7 +1,9 @@
-package wikipedia;
+package wikipedia.reducers;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Reducer;
+import wikipedia.CountComparator;
+import wikipedia.domain.CustomKey;
 
 import java.io.IOException;
 import java.util.*;

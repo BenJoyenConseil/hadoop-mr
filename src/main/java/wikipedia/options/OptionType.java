@@ -1,4 +1,4 @@
-package wikipedia.option;
+package wikipedia.options;
 
 public enum OptionType {
     InputPath(new InputPathOption()),
@@ -7,6 +7,7 @@ public enum OptionType {
     RestrictSearch(new RestrictSearchOption()),
     Date(new DateOption()),
     NoTopTen(new NoTopTenOption()),
+    UseCombiner(new CombinerOption()),
     Help(new HelpOption());
 
     private IOption option;

@@ -1,5 +1,7 @@
 package wikipedia;
 
+import wikipedia.domain.CustomKey;
+
 import java.util.Comparator;
 
 public class CountComparator implements Comparator<CustomKey>{

@@ -1,11 +1,11 @@
-package wikipedia;
+package wikipedia.domain;
+
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.hadoop.io.WritableComparable;
 
 public class CustomKey implements WritableComparable<CustomKey> {
 
@@ -85,7 +85,7 @@ public class CustomKey implements WritableComparable<CustomKey> {
 	}
 	
 	@Override
-	protected Object clone() {
+	public Object clone() {
 		CustomKey key = new CustomKey();
 		key.setCount(count);
 		key.setLang(lang);

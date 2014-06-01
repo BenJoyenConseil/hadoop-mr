@@ -1,4 +1,4 @@
-package wikipedia.option;
+package wikipedia.options;
 
 
 public class OptionCollection {
@@ -35,10 +35,8 @@ public class OptionCollection {
                 DateOption dateOption = new DateOption();
                 dateOption.setValueFromArgs(args);
                 return dateOption;
-            case Help:
-                throw new UnsupportedOperationException("Cannot return Help");
             default:
-                throw new UnsupportedOperationException("Option unknown");
+                throw new UnsupportedOperationException("Cannot return " + optionType.getOption().getCode());
         }
     }
 

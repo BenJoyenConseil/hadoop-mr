@@ -2,7 +2,7 @@ package wikipedia.mappers;
 
 
 import org.junit.Test;
-import wikipedia.CustomKey;
+import wikipedia.domain.CustomKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class RestrictLogMapperTest {
         list.add("Undefined");
         logMapper.subjectsToIgnore = list;
         CustomKey key = new CustomKey();
-        key.setPageName("Undefined");
+        key.setPageName("undefined");
 
         // Then
         boolean result = logMapper.isRecordToBeIgnored(key);

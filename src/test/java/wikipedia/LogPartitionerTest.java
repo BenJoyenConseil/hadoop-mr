@@ -2,6 +2,7 @@ package wikipedia;
 
 import org.apache.hadoop.io.LongWritable;
 import org.junit.Test;
+import wikipedia.domain.CustomKey;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -18,7 +19,7 @@ public class LogPartitionerTest {
         CustomKey de = build("de");
         CustomKey es = build("es");
         LongWritable value = null;
-        int numPartition = 4;
+        int numPartition = 6;
 
         // When
         int result1 = new LogPartitioner().getPartition(fr, value, numPartition);
@@ -27,6 +28,10 @@ public class LogPartitionerTest {
         int result4 = new LogPartitioner().getPartition(es, value, numPartition);
 
         // Then
+        System.out.println(result1);
+        System.out.println(result2);
+        System.out.println(result3);
+        System.out.println(result4);
         assertThat(result1, is(equalTo(0)));
         assertThat(result2, is(equalTo(1)));
         assertThat(result3, is(equalTo(1)));

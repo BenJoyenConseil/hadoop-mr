@@ -6,8 +6,8 @@ import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
-import wikipedia.CustomKey;
-import wikipedia.LogReducer;
+import wikipedia.domain.CustomKey;
+import wikipedia.reducers.LogReducer;
 
 import java.io.IOException;
 import java.util.ArrayList;

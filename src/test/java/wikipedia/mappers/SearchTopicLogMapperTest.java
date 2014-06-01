@@ -3,7 +3,7 @@ package wikipedia.mappers;
 
 import org.junit.Before;
 import org.junit.Test;
-import wikipedia.CustomKey;
+import wikipedia.domain.CustomKey;
 
 import java.util.ArrayList;
 import java.util.List;
