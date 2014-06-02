@@ -19,7 +19,7 @@ public class LogPartitionerTest {
         CustomKey de = build("de");
         CustomKey es = build("es");
         LongWritable value = null;
-        int numPartition = 6;
+        int numPartition = 4;
 
         // When
         int result1 = new LogPartitioner().getPartition(fr, value, numPartition);
