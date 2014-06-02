@@ -51,14 +51,21 @@ public class FileNameTextLoadFunc extends LoadFunc{
 
     @Override
     public Tuple getNext() throws IOException {
+    	Tuple defaultTuple = tupleFactory.newTuple(4);
         try {
             if(!reader.nextKeyValue())
                 return null;
             currentKey.set(reader.getCurrentKey());
             currentValue.set(reader.getCurrentValue());
+            String[] fileNameSplits = StringUtils.split(currentKey.toString(), '-');
+            String[] recordSplits = StringUtils.split(currentValue.toString(), ' ');
+            if(fileNameSplits.length < 2 || recordSplits.length < 4){
+            	return defaultTuple;
+            }
+
             Tuple tuple = tupleFactory.newTuple();
-            tuple.append(currentKey);
-            CustomKey item = logMapper.buildCustomKeyFromRecord(currentKey.toString(), StringUtils.split(currentValue.toString(), ' '));
+            tuple.append(currentKey.toString());
+            CustomKey item = logMapper.buildCustomKeyFromRecord(fileNameSplits[1], recordSplits);
             tuple.append(item.getLang());
             tuple.append(item.getPageName());
             tuple.append(item.getCount());
@@ -66,7 +73,8 @@ public class FileNameTextLoadFunc extends LoadFunc{
             return tuple;
 
         } catch (InterruptedException e) {
-            throw new IOException(e.getMessage());
+            e.printStackTrace();
         }
+		return defaultTuple;
     }
 }
