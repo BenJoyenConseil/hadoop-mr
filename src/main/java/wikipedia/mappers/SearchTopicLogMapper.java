@@ -26,7 +26,7 @@ public class SearchTopicLogMapper extends LogMapper {
     }
 
     @Override
-    boolean isRecordToBeIgnored(CustomKey outputKey) {
+    public boolean isRecordToBeIgnored(CustomKey outputKey) {
         if (subjectsToFilter.contains(outputKey.getPageName()))
             return false;
         for (String subject : subjectsToFilter) {

@@ -23,7 +23,7 @@ public class RestrictLogMapper extends LogMapper{
     }
 
     @Override
-    boolean isRecordToBeIgnored(CustomKey outputKey) {
+    public boolean isRecordToBeIgnored(CustomKey outputKey) {
         if (subjectsToIgnore.contains(outputKey.getPageName()))
             return true;
         for (String subject : subjectsToIgnore) {
