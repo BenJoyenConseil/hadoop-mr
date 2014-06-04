@@ -78,8 +78,8 @@ public class LogAnalysisJob extends Configured implements Tool {
         job.setMapperClass(SearchTopicLogMapper.class);
     }
 
-    private void setRestrictionFilter(OptionCollection options, Job job) throws URISyntaxException, IOException {
-        FileSystem fs = FileSystem.get(getConf());
+    public static void setRestrictionFilter(OptionCollection options, Job job) throws URISyntaxException, IOException {
+        FileSystem fs = FileSystem.get(job.getConfiguration());
         RestrictSearchOption option = (RestrictSearchOption) options.get(OptionType.RestrictSearch);
         fs.copyFromLocalFile(false, true, option.getValue(), new Path("page_names_to_skip"));
         job.addCacheFile(new URI("page_names_to_skip"));

@@ -92,13 +92,13 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 		}
 	}
 
-    public CustomKey buildCustomKeyFromRecord(String fileName, String[] recordSplits) {
+    public CustomKey buildCustomKeyFromRecord(String datePartOffileName, String[] recordSplits) {
         CustomKey outputKey = new CustomKey();
         //lang
         String lang = recordSplits[0].toLowerCase();
         outputKey.setLang(lang);
         //date
-        DateTime date = formatter.parseDateTime(fileName);
+        DateTime date = formatter.parseDateTime(datePartOffileName);
         outputKey.setDay(date.getDayOfMonth());
         outputKey.setMonth(date.getMonthOfYear());
         outputKey.setYear(date.getYear());
@@ -114,7 +114,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
         return langagesSelection.contains(recordLang);
     }
 
-    boolean isRecordToBeIgnored(CustomKey outputKey) {
+    public boolean isRecordToBeIgnored(CustomKey outputKey) {
         return false;
     }
 

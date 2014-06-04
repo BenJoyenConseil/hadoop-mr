@@ -33,13 +33,16 @@ public class SearchTopicLogMapper extends LogMapper {
             if (outputKey.getPageName().contains(subject.toLowerCase()))
                 return false;
 
-            else if(getLevenshteinPourcent(outputKey.getPageName(), subject.toLowerCase()) > LEVENSHTEIN_THRESHOLD)
-                return false;
+            else {
+                float likelihood = getLevenshteinLikelihood(outputKey.getPageName(), subject.toLowerCase());
+                if(likelihood > LEVENSHTEIN_THRESHOLD)
+                    return false;
+            }
         }
         return true;
     }
 
-    float getLevenshteinPourcent(String str1, String str2){
+    float getLevenshteinLikelihood(String str1, String str2){
         int distance = StringUtils.getLevenshteinDistance(str1, str2);
         int longerString = Math.max(str1.length(), str2.length());
         float i = (float)distance / (float)longerString;

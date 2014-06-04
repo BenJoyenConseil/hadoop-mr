@@ -21,4 +21,5 @@ Plusieurs options sont possibles :
     -date : <Optionnel> précise la date à laquelle l'analyse commence (ex : 20140514) au format [yyyyMMdd].
     -searchTopicFile : <Optionnel> précise le fichier contenant la liste des topics à rechercher. Si l'option n'existe pas, la recherche prend par default tous les sujets de wikipedia.
     -restrictionFile : <Optionnel> précise le fichier contenant la liste des topics à ignorer (comme la page d'accueil de Wikipédia). Si l'option n'est pas soumise, la recherche ne sera pas restreinte.
-                      
+    -noTopTen : <Optionnel> Désactive le topTen effectué dans la classe LogMapper.
+    -useCombiner : <Optionnel> utilise le LogReducer comme combiner afin d'allèger le travail du Reducer.
