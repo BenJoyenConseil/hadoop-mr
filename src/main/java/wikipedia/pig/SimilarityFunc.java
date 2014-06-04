@@ -1,7 +1,7 @@
 package wikipedia.pig;
 
 
-import org.apache.pig.EvalFunc;
+import org.apache.pig.FilterFunc;
 import org.apache.pig.data.Tuple;
 import wikipedia.utils.ASCIINormalizer;
 import wikipedia.utils.UTF8Decoder;
@@ -9,7 +9,7 @@ import wikipedia.utils.UTF8Decoder;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class SimilarityFunc extends EvalFunc<Boolean>{
+public class SimilarityFunc extends FilterFunc {
 
     @Override
     public Boolean exec(Tuple input) throws IOException {
