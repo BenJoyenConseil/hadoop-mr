@@ -52,4 +52,18 @@ public class SimilarityFuncTest {
         // Then
         assertThat(result, is(equalTo(true)));
     }
+
+    @Test
+    public void exec_shouldReturnFalse_WhenTupleContainsNull_AtSecondIndex() throws Exception {
+        // Given
+        Tuple tuple = TupleFactory.getInstance().newTuple();
+        tuple.append("bléck");
+        tuple.append(null);
+
+        // When
+        boolean result = new SimilarityFunc().exec(tuple);
+
+        // Then
+        assertThat(result, is(equalTo(false)));
+    }
 }

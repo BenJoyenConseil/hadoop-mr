@@ -18,9 +18,14 @@ public class SimilarityFunc extends FilterFunc {
             return false;
 
         Iterator<Object> iterator = input.iterator();
-        str1 = ASCIINormalizer.formatStringNormalizer(UTF8Decoder.unescape(iterator.next().toString()));
-        str2 = ASCIINormalizer.formatStringNormalizer(UTF8Decoder.unescape(iterator.next().toString()));
+        Object o1 = iterator.next();
+        Object o2 = iterator.next();
+        if(o1 == null || o2 == null) {
+            return false;
+        }
 
+        str1 = ASCIINormalizer.formatStringNormalizer(UTF8Decoder.unescape(o1.toString()));
+        str2 = ASCIINormalizer.formatStringNormalizer(UTF8Decoder.unescape(o2.toString()));
 
         return str1.contains(str2);
     }
