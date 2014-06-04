@@ -91,13 +91,12 @@ public class FileNameTextLoadFunc extends LoadFunc{
             	return defaultTuple;
             }
 
-            Tuple tuple = tupleFactory.newTuple();
-            tuple.append(currentKey.toString());
             CustomKey item = logMapper.buildCustomKeyFromRecord(fileNameSplits[1], recordSplits);
-
             if(logMapper.isRecordToBeIgnored(item))
                 return defaultTuple;
 
+            Tuple tuple = tupleFactory.newTuple();
+            tuple.append(currentKey.toString());
             tuple.append(item.getLang());
             tuple.append(item.getPageName());
             tuple.append(item.getCount());
