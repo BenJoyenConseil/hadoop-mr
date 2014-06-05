@@ -6,7 +6,7 @@ Accueil_principal
 undefined
 Especial
 Random
-Main_Page
+Main Page
 Special:Recherche
 Hauptseite
 Suche
