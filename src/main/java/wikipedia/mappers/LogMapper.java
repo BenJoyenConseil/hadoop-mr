@@ -10,7 +10,7 @@ import org.apache.hadoop.util.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import wikipedia.CountComparator;
+import wikipedia.AscCountComparator;
 import wikipedia.domain.CustomKey;
 import wikipedia.utils.ASCIINormalizer;
 import wikipedia.utils.UTF8Decoder;
@@ -85,7 +85,7 @@ public class LogMapper extends Mapper<Text, Text, CustomKey, LongWritable> {
 		else if(topTen.size() < 10)
 			topTen.add(newKey);
 		else{
-			CustomKey min = Collections.min(topTen, new CountComparator());
+			CustomKey min = Collections.min(topTen, new AscCountComparator());
 			if(min.getCount() < newKey.getCount()){
                 replaceKey(topTen, newKey, min);
 			}

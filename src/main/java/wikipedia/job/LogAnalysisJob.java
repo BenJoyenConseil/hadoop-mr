@@ -1,4 +1,4 @@
-package wikipedia;
+package wikipedia.job;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -9,6 +9,9 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import wikipedia.FileNameTextInputFormat;
+import wikipedia.LogGroupComparator;
+import wikipedia.LogPartitioner;
 import wikipedia.domain.CustomKey;
 import wikipedia.filters.date.DayDatePathFilter;
 import wikipedia.mappers.LogMapper;
@@ -93,8 +96,8 @@ public class LogAnalysisJob extends Configured implements Tool {
     }
 
     private void setMapReduceClasses(Job job) {
+        FileNameTextInputFormat.setInputDirRecursive(job, true);
         job.setMapperClass(LogMapper.class);
-        job.setInputFormatClass(FileNameTextInputFormat.class);
         job.setMapOutputKeyClass(CustomKey.class);
         job.setMapOutputValueClass(LongWritable.class);
 
@@ -103,16 +106,16 @@ public class LogAnalysisJob extends Configured implements Tool {
         job.setPartitionerClass(LogPartitioner.class);
 
         job.setReducerClass(LogReducer.class);
-        job.setOutputFormatClass(TextOutputFormat.class);
         job.setOutputKeyClass(CustomKey.class);
         job.setOutputValueClass(LongWritable.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
     }
 
     private void setInAndOut(Job job, OptionCollection options) throws IOException {
         //paramétrage des fichiers d'entrée
-        FileNameTextInputFormat.setInputDirRecursive(job, true);
         Path in = (Path) options.get(OptionType.InputPath).getValue();
         FileNameTextInputFormat.setInputPaths(job, in);
+        job.setInputFormatClass(FileNameTextInputFormat.class);
 
         //paramétrage de la sortie
         Path out = (Path)options.get(OptionType.OutputPath).getValue();

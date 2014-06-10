@@ -23,7 +23,7 @@ public class RestrictLogMapperTest {
         list.add("Undefined");
         logMapper.subjectsToIgnore = list;
         CustomKey key = new CustomKey();
-        key.setPageName("undefined");
+        key.setPageName("undefined bluck");
 
         // Then
         boolean result = logMapper.isRecordToBeIgnored(key);

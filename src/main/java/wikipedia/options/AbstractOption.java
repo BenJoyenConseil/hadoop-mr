@@ -18,6 +18,7 @@ public abstract class AbstractOption<T> implements IOption{
     }
 
     public void setValueFromArgs(String[] args){
+
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (!arg.equalsIgnoreCase(getCode()))

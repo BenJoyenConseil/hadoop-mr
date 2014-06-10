@@ -13,10 +13,10 @@ public class SimilarityFunc extends FilterFunc {
 
     @Override
     public Boolean exec(Tuple input) throws IOException {
-        String str1, str2;
         if(input.size() < 2)
             return false;
 
+        String str1, str2;
         Iterator<Object> iterator = input.iterator();
         Object o1 = iterator.next();
         Object o2 = iterator.next();

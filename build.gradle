@@ -1,4 +1,4 @@
-project.ext.mainclass = 'wikipedia.LogAnalysisJob'
+project.ext.mainclass = 'wikipedia.job.SimpleJob'
 project.ext.archiveName = 'wikipedia.jar'
 
 apply from: 'build-base.gradle'

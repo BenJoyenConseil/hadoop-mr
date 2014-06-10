@@ -15,7 +15,7 @@ public class WeekDatePathFilter extends DatePathFilter{
 	        return fileDate.getWeekOfWeekyear() == getDateTime().getWeekOfWeekyear();
     	}
     	catch(UnsupportedOperationException e){
-        	LOG.error("Could not parse following path :" + path.getName());
+        	LOG.warn("Could not parse following path :" + path.getName());
         	return true;
     	}
     }

@@ -14,7 +14,7 @@ public class CustomKey implements WritableComparable<CustomKey> {
 	private int year;
 	private String lang;
 	private String pageName;
-	private long count;
+	private Long count;
 
 	@Override
 	public void write(DataOutput out) throws IOException {
@@ -136,11 +136,11 @@ public class CustomKey implements WritableComparable<CustomKey> {
 		this.day = day;
 	}
 
-	public long getCount() {
+	public Long getCount() {
 		return count;
 	}
 
-	public void setCount(long count) {
+	public void setCount(Long count) {
 		this.count = count;
 	}
 

@@ -2,7 +2,7 @@ package wikipedia.reducers;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Reducer;
-import wikipedia.CountComparator;
+import wikipedia.AscCountComparator;
 import wikipedia.domain.CustomKey;
 
 import java.io.IOException;
@@ -13,8 +13,8 @@ public class LogReducer extends Reducer<CustomKey, LongWritable, CustomKey, Long
 	private LongWritable outputValue;
 	private Map<String, List<CustomKey>> topTenByLang;
 	private final int topMapSize = 10;
-	
-	@Override
+
+    @Override
 	protected void setup(Context context) throws IOException, InterruptedException {
 		outputValue = new LongWritable(0);
 		topTenByLang = new HashMap<String, List<CustomKey>>();
@@ -35,14 +35,16 @@ public class LogReducer extends Reducer<CustomKey, LongWritable, CustomKey, Long
 	@Override
 	protected void cleanup(Context context)	throws IOException, InterruptedException {
 
+        Comparator<CustomKey> comparator = new Comparator<CustomKey>() {
+            @Override
+            public int compare(CustomKey arg0, CustomKey arg1) {
+                return (int) (arg1.getCount() - arg0.getCount());
+            }
+        };
+
 		for(String lang : topTenByLang.keySet()){
 			List<CustomKey> top = topTenByLang.get(lang);
-			SortedSet<CustomKey> sortedTop = new TreeSet<CustomKey>(new Comparator<CustomKey>() {
-				@Override
-				public int compare(CustomKey arg0, CustomKey arg1) {
-					return (int)(arg1.getCount() - arg0.getCount());
-				}
-			});
+            SortedSet<CustomKey> sortedTop = new TreeSet<CustomKey>(comparator);
 			sortedTop.addAll(top);
 			for(CustomKey k : sortedTop){
 				outputValue.set(k.getCount());
@@ -61,7 +63,7 @@ public class LogReducer extends Reducer<CustomKey, LongWritable, CustomKey, Long
             top.add(key);
         }
         else{
-            CustomKey min = Collections.min(top, new CountComparator());
+            CustomKey min = Collections.min(top, new AscCountComparator());
             if(min.getCount() < key.getCount()){
                 top.remove(min);
                 top.add(key);

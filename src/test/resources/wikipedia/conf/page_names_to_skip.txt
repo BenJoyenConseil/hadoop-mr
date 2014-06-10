@@ -17,7 +17,3 @@ welcome
 portail
 portal
 portada
-image
-.png
-.jpg
-wiki

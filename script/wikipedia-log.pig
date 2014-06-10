@@ -1,12 +1,12 @@
 REGISTER wikipedia.jar;
-DEFINE CustomInput wikipedia.pig.FileNameTextLoadFunc('20071209');
+DEFINE CustomInput wikipedia.pig.FileNameTextLoadFunc('20140605');
 DEFINE SIM wikipedia.pig.SimilarityFunc();
 
-records = LOAD 'wikipedia' USING CustomInput AS (filename: chararray, lang: chararray, page: chararray, visit: long);
+records = LOAD $in USING CustomInput AS (filename: chararray, lang: chararray, page: chararray, visit: long);
 
 filterbylang = FILTER records BY lang == 'fr' OR lang == 'en' OR lang == 'de';
 
-restrictions = LOAD 'page_names_to_skip.txt' USING TextLoader() AS (page: chararray);
+restrictions = LOAD $restrictionFile USING TextLoader() AS (page: chararray);
 
 join1 = JOIN filterbylang BY page LEFT OUTER, restrictions BY page;
 
@@ -25,4 +25,4 @@ top20 = FOREACH group1 {
 };
 
 
-dump top20;
+store top20 into $out;

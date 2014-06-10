@@ -15,8 +15,8 @@ public class SimilarityFuncTest {
     public void exec_shouldReturnTrue_WhenStr1ContainsStr2_AndIgnoreCase() throws Exception {
         // Given
         Tuple tuple = TupleFactory.getInstance().newTuple();
-        tuple.append("BLICK BLUCK BLOCK");
-        tuple.append("bluck");
+        tuple.append("Wikipedia%3aAdministrateur");
+        tuple.append("Wikipedia");
 
         // When
         boolean result = new SimilarityFunc().exec(tuple);
@@ -43,8 +43,8 @@ public class SimilarityFuncTest {
     public void exec_shouldReturnTrue_WhenStr1ContainsStr2_withAccent() throws Exception {
         // Given
         Tuple tuple = TupleFactory.getInstance().newTuple();
-        tuple.append("bléck");
-        tuple.append("bléck");
+        tuple.append("bl%c3%a9ck");
+        tuple.append("bleck");
 
         // When
         boolean result = new SimilarityFunc().exec(tuple);

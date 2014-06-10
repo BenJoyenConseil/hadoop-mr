@@ -4,11 +4,11 @@ import wikipedia.domain.CustomKey;
 
 import java.util.Comparator;
 
-public class CountComparator implements Comparator<CustomKey>{
+public class AscCountComparator implements Comparator<CustomKey>{
 
 	@Override
 	public int compare(CustomKey arg0, CustomKey arg1) {
-		return (int)(arg0.getCount() - arg1.getCount());
+		return arg0.getCount().compareTo(arg1.getCount());
 	}
 
 }
