@@ -26,8 +26,8 @@ public class UTF8DecoderTest {
     @Test
     public void unescape_ShouldExpulsePourcentAtTheEndOfString() throws Exception {
         // Given
-        String pageNameUnFormated = "jean-fran%c3%a7ois cop%c3%a9%";
-        String expected = "jean-françois copé";
+        String pageNameUnFormated = "Albert_Einstein%\n";
+        String expected = "Albert_Einstein";
 
         // When
         String result = UTF8Decoder.unescape(pageNameUnFormated);

@@ -30,7 +30,7 @@ public class DatePathFilter implements PathFilter {
     	}
     }
 
-    protected DateTime parseFileDateTime(Path path) throws UnsupportedOperationException {
+    public DateTime parseFileDateTime(Path path) throws UnsupportedOperationException {
         String[] fileNameSplits = StringUtils.split(path.getName(), '-');
         String dateString;
 

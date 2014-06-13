@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat;
 public class DayDatePathFilterTest {
 
     @Test
-    public void accept_shouldReturnTrueWhenFilteredDay_IsEqualToDayOfDateExtractedFromPath() throws Exception {
+    public void accept_shouldReturnTrue_WhenFilteredDay_IsEqualToDayOfDateExtractedFromPath() throws Exception {
         // Given
         Path path = new Path("pagecounts-20140601");
         String dateString = "20140601";
@@ -27,7 +27,7 @@ public class DayDatePathFilterTest {
     }
 
     @Test
-    public void accept_shouldReturnFalseWhenFilteredDay_IsNotEqualToDayOfDateExtractedFromPath() throws Exception {
+    public void accept_shouldReturnFalse_WhenFilteredDay_IsNotEqualToDayOfDateExtractedFromPath() throws Exception {
         // Given
         Path path = new Path("pagecounts-20140526");
         String dateString = "20140525";
@@ -41,7 +41,7 @@ public class DayDatePathFilterTest {
     }
 
     @Test
-    public void accept_shouldReturnFalseWhenFilteredDay_IsAnotherYearThanInFileName() throws Exception {
+    public void accept_shouldReturnFalse_WhenFilteredDay_IsAnotherYearThanInFileName() throws Exception {
         // Given
         Path path = new Path("pagecounts-20140528");
         String dateString = "20130528";
